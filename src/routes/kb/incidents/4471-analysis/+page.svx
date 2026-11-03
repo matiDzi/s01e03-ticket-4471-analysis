@@ -14,14 +14,14 @@ Ticket #4471 merged 412 unique reports about calendar invites and booking dates 
 
 | Cause | Count | Description |
 |-------|-------|-------------|
-| Parser reads dates month-first; tenants write day-first | 385 | The shared parser assumes MM/DD format (US convention) but day-first locales write DD/MM. Dates are inverted: 4 July becomes 7 April, 10 March becomes 3 October. Affects all channels and most locales. |
-| Form hint says MM/DD but tenant types DD/MM | 42 | The booking form shows a MM/DD hint but doesn't enforce it. Users follow their locale's convention instead, creating the same inversion as the parser bug. Specific to booking form users. |
+| Parser reads dates month-first; tenants write day-first | 379 | The shared parser reads every date month first. When a day-first tenant uses app, email, or form channels, their dates are flipped: 4 July becomes 7 April, 10 March becomes 3 October. Affects users in day-first locales across all channels. |
+| Form hint says MM/DD but tenant types DD/MM | 33 | Through booking-v3, day-first tenants see a MM/DD/YYYY hint but type DD/MM (their locale). The form reads their input the same way, creating the same inversion. Specific to booking-v3 users in day-first locales. |
 
 **Total: 412 unique reports across 2 categories**
 
 ## Root cause analysis
 
-Both issues stem from a failure to respect locale conventions when handling dates. The parser bug dominates (385 reports, 91% of merged reports), affecting users across all channels (app, email, form) in locales including en-GB, nl-NL, cs-CZ, de-DE, it-IT, da-DK, pt-PT, pl-PL, fr-FR, es-ES, en-IE, and en-US. The form hint issue is smaller (42 reports, 10% of merged reports) but shows the same root cause: the system assumes MM/DD while users in day-first locales write DD/MM.
+Both issues stem from the system's assumption that dates are month-first, conflicting with day-first locales. The parser bug dominates (379 reports, 92% of merged reports), affecting all channels (app, email, form) and day-first locales including en-GB, nl-NL, cs-CZ, de-DE, it-IT, da-DK, pt-PT, pl-PL, fr-FR, es-ES, and en-IE. The form hint issue is smaller (33 reports, 8% of merged reports) but stems from the same root cause: booking-v3 shows MM/DD but day-first tenants type DD/MM.
 
 ## Next steps
 
