@@ -8,24 +8,21 @@ signature: v1.eyJzdWIiOiIzNjc3IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYX
 
 # Ticket #4471 — Calendar and booking date discrepancies
 
-Ticket #4471 merged 427 reports about calendar invites and booking dates not matching. Analysis found six distinct problem types:
+Ticket #4471 merged 412 unique reports about calendar invites and booking dates not matching. Analysis found three distinct root causes:
 
 ## Problems identified
 
-| Problem | Count | Description |
-|---------|-------|-------------|
-| Wrong day/date shown in calendar invite | 295 | Calendar invites display incorrect dates or days of the week. Examples: invite shows Tuesday when it should be Monday, or completely wrong dates like 4 July instead of 7 April. |
-| Other date/invite discrepancy | 52 | Date conflicts between booking and invite that don't fit other patterns. Customers cannot determine which date is correct. |
-| Appointment automatically moved | 29 | Appointments appear to shift between dates without user action. Customers report bookings changing dates on their own. |
-| Mixed up or conflicting dates | 27 | Multiple conflicting dates in the same booking. Invites contradict what customers agreed to during booking. |
-| Date transformation/conversion error | 13 | Date values corrupted or incorrectly converted. Examples: 4 March → 3 April, or 7 April → 4 July (day-month swap pattern). |
-| Booking date differs from invite date | 11 | Confirmed booking date does not match the calendar invite. Customer books on one date, receives invite for a different date. |
+| Cause | Count | Description |
+|-------|-------|-------------|
+| Parser reads dates month-first; tenants write day-first | 292 | The shared parser assumes MM/DD format but day-first locales write DD/MM. Dates are inverted: 4 July becomes 7 April, 10 March becomes 3 October. Affects most reports. |
+| Form hint says MM/DD but tenant types DD/MM | 23 | Booking form shows a MM/DD hint but the tenant's booking-v3 form doesn't enforce it. Users follow their locale's convention instead, creating the same inversion as the parser bug. |
+| Other date/booking issues | 97 | Reports that don't fit the primary causes. Mixed in when #4471 was merged; needs separate investigation. |
 
-**Total: 427 reports across 6 distinct problem categories**
+**Total: 412 unique reports across 3 categories**
 
-## Root cause patterns
+## Root cause analysis
 
-The day-month swap pattern in transformation errors (13 reports) suggests localization or date parsing issues, particularly in regions using DD-MM format. The largest category (295 reports of wrong dates) indicates a systemic issue in how dates are formatted or calculated when generating invites.
+Both the parser and form hint issues stem from a failure to respect locale conventions. The parser bug is the dominant cause (292 reports), affecting all channels. The form hint bug is smaller (23 reports) and specific to booking form users. The remaining 97 reports appear to cover other date or booking issues not directly related to the MM/DD vs DD/MM mismatch.
 
 ## Next steps
 
