@@ -1,0 +1,34 @@
+---
+title: Ticket #4471 — Calendar and booking date discrepancies
+owner: support desk
+status: open
+reviewed: false
+signature: v1.eyJzdWIiOiIzNjc3IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTM3MzU5MDAsImV4cCI6MTc5MzgyMjMwMH0.nVmnYA1luH6JFBO9T76zHWKrz5sIrgGmZnR2Rx-dios
+---
+
+# Ticket #4471 — Calendar and booking date discrepancies
+
+Ticket #4471 merged 427 reports about calendar invites and booking dates not matching. Analysis found six distinct problem types:
+
+## Problems identified
+
+| Problem | Count | Description |
+|---------|-------|-------------|
+| Wrong day/date shown in calendar invite | 295 | Calendar invites display incorrect dates or days of the week. Examples: invite shows Tuesday when it should be Monday, or completely wrong dates like 4 July instead of 7 April. |
+| Other date/invite discrepancy | 52 | Date conflicts between booking and invite that don't fit other patterns. Customers cannot determine which date is correct. |
+| Appointment automatically moved | 29 | Appointments appear to shift between dates without user action. Customers report bookings changing dates on their own. |
+| Mixed up or conflicting dates | 27 | Multiple conflicting dates in the same booking. Invites contradict what customers agreed to during booking. |
+| Date transformation/conversion error | 13 | Date values corrupted or incorrectly converted. Examples: 4 March → 3 April, or 7 April → 4 July (day-month swap pattern). |
+| Booking date differs from invite date | 11 | Confirmed booking date does not match the calendar invite. Customer books on one date, receives invite for a different date. |
+
+**Total: 427 reports across 6 distinct problem categories**
+
+## Root cause patterns
+
+The day-month swap pattern in transformation errors (13 reports) suggests localization or date parsing issues, particularly in regions using DD-MM format. The largest category (295 reports of wrong dates) indicates a systemic issue in how dates are formatted or calculated when generating invites.
+
+## Next steps
+
+Each problem type has been filed as a separate issue in the GitHub repo so the engineering team can investigate and fix them independently.
+
+<RenderStamp {signature} />
