@@ -3,26 +3,25 @@ title: Ticket #4471 — Calendar and booking date discrepancies
 owner: support desk
 status: open
 reviewed: false
-signature: v1.eyJzdWIiOiIzNjc3IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTM3MzU5MDAsImV4cCI6MTc5MzgyMjMwMH0.nVmnYA1luH6JFBO9T76zHWKrz5sIrgGmZnR2Rx-dios
+signature: v1.eyJzdWIiOiIzNjc3IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTM3MzY5ODIsImV4cCI6MTc5MzgyMzM4Mn0.XWMzdtCQnPPMnlmxdLQHix6g-PuV46sNtYP4cdQOn70
 ---
 
 # Ticket #4471 — Calendar and booking date discrepancies
 
-Ticket #4471 merged 412 unique reports about calendar invites and booking dates not matching. Analysis found three distinct root causes:
+Ticket #4471 merged 412 unique reports about calendar invites and booking dates not matching. Analysis found two distinct root causes, both stemming from locale handling failures.
 
 ## Problems identified
 
 | Cause | Count | Description |
 |-------|-------|-------------|
-| Parser reads dates month-first; tenants write day-first | 292 | The shared parser assumes MM/DD format but day-first locales write DD/MM. Dates are inverted: 4 July becomes 7 April, 10 March becomes 3 October. Affects most reports. |
-| Form hint says MM/DD but tenant types DD/MM | 23 | Booking form shows a MM/DD hint but the tenant's booking-v3 form doesn't enforce it. Users follow their locale's convention instead, creating the same inversion as the parser bug. |
-| Other date/booking issues | 97 | Reports that don't fit the primary causes. Mixed in when #4471 was merged; needs separate investigation. |
+| Parser reads dates month-first; tenants write day-first | 385 | The shared parser assumes MM/DD format (US convention) but day-first locales write DD/MM. Dates are inverted: 4 July becomes 7 April, 10 March becomes 3 October. Affects all channels and most locales. |
+| Form hint says MM/DD but tenant types DD/MM | 42 | The booking form shows a MM/DD hint but doesn't enforce it. Users follow their locale's convention instead, creating the same inversion as the parser bug. Specific to booking form users. |
 
-**Total: 412 unique reports across 3 categories**
+**Total: 412 unique reports across 2 categories**
 
 ## Root cause analysis
 
-Both the parser and form hint issues stem from a failure to respect locale conventions. The parser bug is the dominant cause (292 reports), affecting all channels. The form hint bug is smaller (23 reports) and specific to booking form users. The remaining 97 reports appear to cover other date or booking issues not directly related to the MM/DD vs DD/MM mismatch.
+Both issues stem from a failure to respect locale conventions when handling dates. The parser bug dominates (385 reports, 91% of merged reports), affecting users across all channels (app, email, form) in locales including en-GB, nl-NL, cs-CZ, de-DE, it-IT, da-DK, pt-PT, pl-PL, fr-FR, es-ES, en-IE, and en-US. The form hint issue is smaller (42 reports, 10% of merged reports) but shows the same root cause: the system assumes MM/DD while users in day-first locales write DD/MM.
 
 ## Next steps
 
